@@ -4,6 +4,7 @@
 #include "image.h"
 #include "ray.h"
 #include "hit.h"
+#include "shape.h"
 #include "primitive.h"
 #include "camera.h"
 #include "scene.h"
@@ -17,9 +18,15 @@ int main() {
   Image img(512, 512);
   PinholeCamera cam(Vec3(0, 1, -3), Vec3(0, 0, 1));
 
+  auto plane = std::make_shared<Plane>(Vec3(0, 0, 0), 3, 3, Vec3(0, 1, 0), Vec3(1, 0, 0));
+  auto sphere = std::make_shared<Sphere>(Vec3(0, 1, 0), 1);
+
+  auto plane_prim = std::make_shared<Primitive>(plane, std::make_shared<Diffuse>(std::make_shared<Mat>(Vec3(0.9))), nullptr);
+  auto sphere_prim = std::make_shared<Primitive>(sphere, std::make_shared<Diffuse>(std::make_shared<Mat>(Vec3(0.9))), nullptr);
+
   Scene scene;
-  scene.add(std::make_shared<Plane>(Vec3(0, 0, 0), 3, 3, Vec3(0, 1, 0), Vec3(1, 0, 0), std::make_shared<Diffuse>(std::make_shared<Mat>(Vec3(0.9))), nullptr));
-  scene.add(std::make_shared<Sphere>(Vec3(0, 1, 0), 1, std::make_shared<Diffuse>(std::make_shared<Mat>(Vec3(0.9))), nullptr));
+  scene.add(plane_prim);
+  scene.add(sphere_prim);
 
   for(int i = 0; i < img.height; i++) {
     for(int j = 0; j < img.width; j++) {

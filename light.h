@@ -1,6 +1,8 @@
 #ifndef LIGHT_H
 #define LIGHT_H
+#include <memory>
 #include "vec3.h"
+#include "shape.h"
 
 
 class Light {
@@ -13,6 +15,8 @@ class Light {
 
 class AreaLight : public Light {
   public:
-    AreaLight(const Vec3& _le) : Light(_le) {};
+    std::shared_ptr<Shape> shape;
+
+    AreaLight(const Vec3& _le, const std::shared_ptr<Shape>& _shape) : Light(_le), shape(_shape) {};
 };
 #endif
