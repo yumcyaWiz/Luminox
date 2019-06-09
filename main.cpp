@@ -9,6 +9,7 @@
 #include "scene.h"
 #include "sampler.h"
 #include "material.h"
+#include "texture.h"
 
 
 int main() {
@@ -16,8 +17,8 @@ int main() {
   PinholeCamera cam(Vec3(0, 1, -3), Vec3(0, 0, 1));
 
   Scene scene;
-  scene.add(std::make_shared<Plane>(Vec3(0, 0, 0), 3, 3, Vec3(0, 1, 0), Vec3(1, 0, 0)));
-  scene.add(std::make_shared<Sphere>(Vec3(0, 1, 0), 1));
+  scene.add(std::make_shared<Plane>(Vec3(0, 0, 0), 3, 3, Vec3(0, 1, 0), Vec3(1, 0, 0), std::make_shared<Diffuse>(std::make_shared<Mat>(Vec3(0.9)))));
+  scene.add(std::make_shared<Sphere>(Vec3(0, 1, 0), 1, std::make_shared<Diffuse>(std::make_shared<Mat>(Vec3(0.9)))));
 
   for(int i = 0; i < img.height; i++) {
     for(int j = 0; j < img.width; j++) {

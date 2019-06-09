@@ -1,13 +1,19 @@
 #ifndef PRIMITIVE_H
 #define PRIMITIVE_H
 #include <cmath>
+#include <memory>
 #include "ray.h"
 #include "hit.h"
+#include "material.h"
 #include "texture.h"
 
 
 class Primitive {
   public:
+    std::shared_ptr<Material> material;
+
+    Primitive(const std::shared_ptr<Material>& _material) : material(_material) {};
+
     virtual bool intersect(const Ray&, Hit& res) const = 0;
 };
 
@@ -17,7 +23,7 @@ class Sphere : public Primitive {
     Vec3 center;
     float radius;
 
-    Sphere(const Vec3& _center, float _radius) : center(_center), radius(_radius) {};
+    Sphere(const Vec3& _center, float _radius, const std::shared_ptr<Material>& _material) : Primitive(_material), center(_center), radius(_radius) {};
 
     bool intersect(const Ray& ray, Hit& res) const {
       float b = dot(ray.origin - center, ray.direction);
@@ -51,7 +57,7 @@ class Plane : public Primitive {
     Vec3 right;
     Vec3 forward;
 
-    Plane(const Vec3& _center, float _width, float _height, const Vec3& _normal, const Vec3& _right) : center(_center), width(_width), height(_height), normal(_normal), right(_right) {
+    Plane(const Vec3& _center, float _width, float _height, const Vec3& _normal, const Vec3& _right, const std::shared_ptr<Material>& _material) : Primitive(_material), center(_center), width(_width), height(_height), normal(_normal), right(_right) {
       forward = cross(right, normal);
     };
 

@@ -14,7 +14,7 @@ class Material {
 
     Material(const std::shared_ptr<Texture>& _tex) : texture(_tex) {};
 
-    virtual Vec3 sample(const Vec3& wo_local) const = 0;
+    virtual Vec3 sample(const Vec3& wo_local, const Hit& res, Sampler& sampler, Vec3& wi_local, float& pdf_w) const = 0;
 };
 
 
