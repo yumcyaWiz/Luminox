@@ -1,4 +1,8 @@
+#include "vec3.h"
 #include "image.h"
+#include "ray.h"
+#include "hit.h"
+#include "primitive.h"
 
 
 int main() {
