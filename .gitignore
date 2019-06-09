@@ -1,2 +1,4 @@
 *.out
 *.ppm
+*.png
+imgs/
