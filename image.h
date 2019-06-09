@@ -33,6 +33,17 @@ class Image {
     void setPixel(int i, int j, const Vec3& c) {
       pixels[j + i*width] = c;
     };
+    void addPixel(int i, int j, const Vec3& c) {
+      pixels[j + i*width] += c;
+    };
+
+    void divide(float k) {
+      for(int i = 0; i < height; i++) {
+        for(int j = 0; j < width; j++) {
+          pixels[j + i*width] /= k;
+        }
+      }
+    };
 
     void ppm_output(const std::string& filename) const {
       std::ofstream file(filename);

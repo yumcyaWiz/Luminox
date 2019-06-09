@@ -16,6 +16,31 @@ class Vec3 {
       return Vec3(-x, -y, -z);
     };
 
+    Vec3& operator+=(const Vec3& v) {
+      x += v.x;
+      y += v.y;
+      z += v.z;
+      return *this;
+    };
+    Vec3& operator-=(const Vec3& v) {
+      x -= v.x;
+      y -= v.y;
+      z -= v.z;
+      return *this;
+    };
+    Vec3& operator*=(const Vec3& v) {
+      x *= v.x;
+      y *= v.y;
+      z *= v.z;
+      return *this;
+    };
+    Vec3& operator/=(const Vec3& v) {
+      x /= v.x;
+      y /= v.y;
+      z /= v.z;
+      return *this;
+    };
+
     float length() const {
       return std::sqrt(x*x + y*y + z*z);
     };

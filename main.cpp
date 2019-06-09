@@ -12,6 +12,7 @@
 #include "material.h"
 #include "texture.h"
 #include "light.h"
+#include "integrator.h"
 
 
 int main() {
