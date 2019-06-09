@@ -68,7 +68,7 @@ inline Vec3 operator/(float k, const Vec3& v2) {
 
 
 inline std::ostream& operator<<(std::ostream& stream, const Vec3& v) {
-  stream << "(" << v.x << ", " << v.y << ", " << v.z << ")" << std::endl;
+  stream << "(" << v.x << ", " << v.y << ", " << v.z << ")";
   return stream;
 }
 

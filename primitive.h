@@ -36,6 +36,7 @@ class Sphere : public Primitive {
       res.hitPos = ray(t);
       res.hitNormal = normalize(res.hitPos - center);
       res.hitPrimitive = this;
+      return true;
     };
 };
 
@@ -66,6 +67,7 @@ class Plane : public Primitive {
       res.hitPos = hitPos;
       res.hitNormal = dot(-ray.direction, normal) > 0 ? normal : -normal;
       res.hitPrimitive = this;
+      return true;
     };
 };
 #endif
