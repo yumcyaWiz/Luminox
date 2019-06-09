@@ -1,5 +1,6 @@
 #ifndef SAMPLER_H
 #define SAMPLER_H
+#include <cmath>
 #include <random>
 class Sampler {
   public:
@@ -22,4 +23,13 @@ class UniformSampler : public Sampler {
       return dist(mt);
     };
 };
+
+
+inline Vec3 sampleCosineHemisphere(float u, float v, float& pdf) {
+  float y = 1 - 2*u;
+  float r = std::sqrt(std::max(0.0f, 1 - y*y));
+  float phi = 2*M_PI*v;
+  pdf = y / M_PI;
+  return Vec3(r*std::cos(phi), y, r*std::sin(phi));
+}
 #endif

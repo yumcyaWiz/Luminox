@@ -1,3 +1,4 @@
+#include <iostream>
 #include <memory>
 #include "vec3.h"
 #include "image.h"
@@ -6,6 +7,8 @@
 #include "primitive.h"
 #include "camera.h"
 #include "scene.h"
+#include "sampler.h"
+#include "material.h"
 
 
 int main() {

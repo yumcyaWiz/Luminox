@@ -3,6 +3,7 @@
 #include <cmath>
 #include "ray.h"
 #include "hit.h"
+#include "texture.h"
 
 
 class Primitive {
