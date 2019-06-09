@@ -13,7 +13,7 @@ class Vec3 {
     Vec3(float _x, float _y, float _z) : x(_x), y(_y), z(_z) {};
 
     float length() const {
-      return std:sqrt(x*x + y*y + z*z);
+      return std::sqrt(x*x + y*y + z*z);
     };
     float length2() const {
       return x*x + y*y + z*z;
@@ -63,8 +63,9 @@ inline Vec3 operator/(float k, const Vec3& v2) {
 }
 
 
-inline std::ostream operator<<(std::ostream& stream, const Vec3& v) {
+inline std::ostream& operator<<(std::ostream& stream, const Vec3& v) {
   stream << "(" << v.x << ", " << v.y << ", " << v.z << ")" << std::endl;
+  return stream;
 }
 
 
