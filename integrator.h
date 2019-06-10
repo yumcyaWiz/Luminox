@@ -35,8 +35,13 @@ class PurePathTracing : public Integrator {
 
       for(int i = 0; i < maxDepth; i++) {
         //Russian Roulette
-        if(sampler->getNext() > roulette) break;
-        else throughput /= roulette;
+        if(sampler->getNext() > roulette) {
+          break;
+        }
+        else {
+          throughput /= roulette;
+          roulette *= 0.99;
+        }
 
         Hit res;
         if(scene.intersect(ray, res)) {
