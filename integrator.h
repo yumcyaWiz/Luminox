@@ -8,11 +8,11 @@
 
 class Integrator {
   public:
-    Image image;
+    std::shared_ptr<Image> image;
     std::shared_ptr<Camera> camera;
     std::shared_ptr<Sampler> sampler;
 
-    Integrator(const Image& _image, const std::shared_ptr<Camera>& _camera, const std::shared_ptr<Sampler>& _sampler) : image(_image), camera(_camera), sampler(_sampler) {};
+    Integrator(const std::shared_ptr<Image>& _image, const std::shared_ptr<Camera>& _camera, const std::shared_ptr<Sampler>& _sampler) : image(_image), camera(_camera), sampler(_sampler) {};
 
     virtual Vec3 integrate(const Ray& ray, const Scene& scene) = 0;
 };
@@ -24,7 +24,7 @@ class PurePathTracing : public Integrator {
     int maxDepth;
 
 
-    PurePathTracing(const Image& _image, const std::shared_ptr<Camera>& _camera, const std::shared_ptr<Sampler>& _sampler, int _samples, int _maxDepth=100) : Integrator(_image, _camera, _sampler), samples(_samples), maxDepth(_maxDepth) {};
+    PurePathTracing(const std::shared_ptr<Image>& _image, const std::shared_ptr<Camera>& _camera, const std::shared_ptr<Sampler>& _sampler, int _samples, int _maxDepth=100) : Integrator(_image, _camera, _sampler), samples(_samples), maxDepth(_maxDepth) {};
 
 
     Vec3 integrate(const Ray& initRay, const Scene& scene) {
@@ -75,17 +75,17 @@ class PurePathTracing : public Integrator {
 
     void render(const Scene& scene) {
       for(int k = 0; k < samples; k++) {
-        for(int i = 0; i < image.height; i++) {
-          for(int j = 0; j < image.width; j++) {
-            float u = (2*(j + sampler->getNext()) - image.width)/image.height;
-            float v = (2*(i + sampler->getNext()) - image.height)/image.height;
+        for(int i = 0; i < image->height; i++) {
+          for(int j = 0; j < image->width; j++) {
+            float u = (2*(j + sampler->getNext()) - image->width)/image->height;
+            float v = (2*(i + sampler->getNext()) - image->height)/image->height;
             Ray ray = camera->getRay(u, v);
-            image.addPixel(i, j, this->integrate(ray, scene));
+            image->addPixel(i, j, this->integrate(ray, scene));
           }
         }
       }
-      image.divide(samples);
-      image.ppm_output("output.ppm");
+      image->divide(samples);
+      image->ppm_output("output.ppm");
     };
 };
 #endif

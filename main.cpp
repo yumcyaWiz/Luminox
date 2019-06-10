@@ -16,7 +16,7 @@
 
 
 int main() {
-  Image image(512, 512);
+  auto image = std::make_shared<Image>(512, 512);
   auto camera = std::make_shared<PinholeCamera>(Vec3(0, 1, -3), Vec3(0, 0, 1));
   auto sampler = std::make_shared<UniformSampler>();
 
