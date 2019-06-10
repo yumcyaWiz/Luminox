@@ -37,7 +37,7 @@ int main() {
   auto left_wall_prim = std::make_shared<Primitive>(left_wall, std::make_shared<Diffuse>(green), nullptr);
   auto ceil_prim = std::make_shared<Primitive>(ceil, std::make_shared<Diffuse>(white), nullptr);
   auto forward_wall_prim = std::make_shared<Primitive>(forward_wall, std::make_shared<Diffuse>(white), nullptr);
-  auto sphere1_prim = std::make_shared<Primitive>(sphere1, std::make_shared<Diffuse>(white), nullptr);
+  auto sphere1_prim = std::make_shared<Primitive>(sphere1, std::make_shared<Mirror>(white), nullptr);
   auto sphere2_prim = std::make_shared<Primitive>(sphere2, std::make_shared<Diffuse>(white), nullptr);
 
   Scene scene;

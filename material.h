@@ -9,12 +9,19 @@
 #include "sampler.h"
 
 
-float cosTheta(const Vec3& w) {
+inline float cosTheta(const Vec3& w) {
   return w.y;
 }
-float absCosTheta(const Vec3& w) {
+inline float absCosTheta(const Vec3& w) {
   return std::abs(w.y);
 }
+
+
+
+inline Vec3 reflect(const Vec3& v, const Vec3& n) {
+  return -v + 2*dot(v, n)*n;
+}
+
 
 
 class Material {
@@ -36,6 +43,18 @@ class Diffuse : public Material {
       float v = sampler.getNext();
       wi_local = sampleCosineHemisphere(u, v, pdf_w);
       return texture->eval(res) / M_PI;
+    };
+};
+
+
+class Mirror : public Material {
+  public:
+    Mirror(const std::shared_ptr<Texture>& _tex) : Material(_tex) {};
+
+    Vec3 sample(const Vec3& wo_local, const Hit& res, Sampler& sampler, Vec3& wi_local, float& pdf_w) const {
+      wi_local = reflect(wo_local, Vec3(0, 1, 0));
+      pdf_w = 1;
+      return texture->eval(res) / absCosTheta(wi_local);
     };
 };
 #endif
