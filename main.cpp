@@ -28,17 +28,18 @@ int main() {
   auto sphere1 = std::make_shared<Sphere>(Vec3(-1.5, 1.5, 1.5), 1.5);
   auto sphere2 = std::make_shared<Sphere>(Vec3(1.5, 1.5, -1.0), 1.5);
 
-  auto white = std::make_shared<Mat>(Vec3(0.8));
+  auto white1 = std::make_shared<Mat>(Vec3(0.8));
+  auto white2 = std::make_shared<Mat>(Vec3(0.99));
   auto red = std::make_shared<Mat>(Vec3(0.8, 0.2, 0.2));
   auto green = std::make_shared<Mat>(Vec3(0.2, 0.8, 0.2));
 
-  auto floor_prim = std::make_shared<Primitive>(floor, std::make_shared<Diffuse>(white), nullptr);
+  auto floor_prim = std::make_shared<Primitive>(floor, std::make_shared<Diffuse>(white1), nullptr);
   auto right_wall_prim = std::make_shared<Primitive>(right_wall, std::make_shared<Diffuse>(red), nullptr);
   auto left_wall_prim = std::make_shared<Primitive>(left_wall, std::make_shared<Diffuse>(green), nullptr);
-  auto ceil_prim = std::make_shared<Primitive>(ceil, std::make_shared<Diffuse>(white), nullptr);
-  auto forward_wall_prim = std::make_shared<Primitive>(forward_wall, std::make_shared<Diffuse>(white), nullptr);
-  auto sphere1_prim = std::make_shared<Primitive>(sphere1, std::make_shared<Mirror>(white), nullptr);
-  auto sphere2_prim = std::make_shared<Primitive>(sphere2, std::make_shared<Diffuse>(white), nullptr);
+  auto ceil_prim = std::make_shared<Primitive>(ceil, std::make_shared<Diffuse>(white1), std::make_shared<AreaLight>(Vec3(1.5), ceil));
+  auto forward_wall_prim = std::make_shared<Primitive>(forward_wall, std::make_shared<Diffuse>(white1), nullptr);
+  auto sphere1_prim = std::make_shared<Primitive>(sphere1, std::make_shared<Mirror>(white2), nullptr);
+  auto sphere2_prim = std::make_shared<Primitive>(sphere2, std::make_shared<Glass>(white2, 1.5), nullptr);
 
   Scene scene;
   scene.add(floor_prim);
@@ -49,6 +50,6 @@ int main() {
   scene.add(sphere1_prim);
   scene.add(sphere2_prim);
 
-  PurePathTracing integrator(image, camera, sampler, 100);
+  PurePathTracing integrator(image, camera, sampler, 1000);
   integrator.render(scene);
 }

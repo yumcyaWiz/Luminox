@@ -73,7 +73,7 @@ class PurePathTracing : public Integrator {
         }
         //When ray hits sky
         else {
-          accumulated_color += throughput * Vec3(1, 1, 1);
+          accumulated_color += throughput * Vec3(0, 0, 0);
           break;
         }
       }
@@ -83,8 +83,8 @@ class PurePathTracing : public Integrator {
 
     void render(const Scene& scene) {
       for(int k = 0; k < samples; k++) {
-        for(int i = 0; i < image->height; i++) {
 #pragma omp parallel for schedule(dynamic, 1)
+        for(int i = 0; i < image->height; i++) {
           for(int j = 0; j < image->width; j++) {
             float u = (2*(j + sampler->getNext()) - image->width)/image->height;
             float v = (2*(i + sampler->getNext()) - image->height)/image->height;
