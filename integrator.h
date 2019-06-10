@@ -15,30 +15,77 @@ class Integrator {
     Integrator(const Image& _image, const std::shared_ptr<Camera>& _camera, const std::shared_ptr<Sampler>& _sampler) : image(_image), camera(_camera), sampler(_sampler) {};
 
     virtual Vec3 integrate(const Ray& ray, const Scene& scene) = 0;
-
-    void render(const Scene& scene) {
-      for(int i = 0; i < image.height; i++) {
-        for(int j = 0; j < image.width; j++) {
-          float rx = sampler->getNext();
-          float ry = sampler->getNext();
-          float u = (2*(j + rx) - image.width) / image.height;
-          float v = (2*(i + ry) - image.height) / image.height;
-
-          Ray ray = camera->getRay(u, v);
-          Vec3 color = this->integrate(ray, scene);
-
-          image.addPixel(i, j, color);
-        }
-      }
-    };
 };
 
 
 class PurePathTracing : public Integrator {
   public:
-    PurePathTracing(const Image& _image, const std::shared_ptr<Camera>& _camera, const std::shared_ptr<Sampler>& _sampler) : Integrator(_image, _camera, _sampler) {};
+    int samples;
+    int maxDepth;
 
-    Vec3 integrate(const Ray& ray, const Scene& scene) {
+
+    PurePathTracing(const Image& _image, const std::shared_ptr<Camera>& _camera, const std::shared_ptr<Sampler>& _sampler, int _samples, int _maxDepth=100) : Integrator(_image, _camera, _sampler), samples(_samples), maxDepth(_maxDepth) {};
+
+
+    Vec3 integrate(const Ray& initRay, const Scene& scene) {
+      Ray ray = initRay;
+      Vec3 throughput(1, 1, 1);
+      float roulette = 1;
+      Vec3 accumulated_color(0, 0, 0);
+
+      for(int i = 0; i < maxDepth; i++) {
+        //Russian Roulette
+        if(sampler->getNext() > roulette) break;
+        else throughput /= roulette;
+
+        Hit res;
+        if(scene.intersect(ray, res)) {
+          //When ray hits arealight
+          if(res.hitPrimitive->hasLight()) {
+            accumulated_color += throughput * res.hitPrimitive->light->Le();
+          }
+
+          //Generate Local Coordinate Vectors
+          Vec3 n, s, t;
+          orthonormalBasis(n, s, t);
+          Vec3 wo_local = world2local(-ray.direction, s, n, t);
+
+          //BRDF Sampling
+          auto mat = res.hitPrimitive->material;
+          Vec3 wi_local;
+          float pdf_w;
+          Vec3 brdf_value = mat->sample(wo_local, res, *sampler, wi_local, pdf_w);
+
+          //Update throughput
+          throughput *= brdf_value * absCosTheta(wi_local) / pdf_w;
+
+          //Generate Next Ray
+          Vec3 wi = local2world(wi_local, s, n, t);
+          ray = Ray(res.hitPos, wi);
+        }
+        //When ray hits sky
+        else {
+          accumulated_color += throughput * Vec3(1, 1, 1);
+          break;
+        }
+      }
+      return accumulated_color;
+    };
+
+
+    void render(const Scene& scene) {
+      for(int k = 0; k < samples; k++) {
+        for(int i = 0; i < image.height; i++) {
+          for(int j = 0; j < image.width; j++) {
+            float u = (2*(j + sampler->getNext()) - image.width)/image.height;
+            float v = (2*(i + sampler->getNext()) - image.height)/image.height;
+            Ray ray = camera->getRay(u, v);
+            image.addPixel(i, j, this->integrate(ray, scene));
+          }
+        }
+      }
+      image.divide(samples);
+      image.ppm_output("output.ppm");
     };
 };
 #endif

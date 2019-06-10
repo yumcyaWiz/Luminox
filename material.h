@@ -1,11 +1,20 @@
 #ifndef MATERIAL_H
 #define MATERIAL_H
+#include <cmath>
 #include <memory>
 #include "vec3.h"
 #include "ray.h"
 #include "hit.h"
 #include "texture.h"
 #include "sampler.h"
+
+
+float cosTheta(const Vec3& w) {
+  return w.y;
+}
+float absCosTheta(const Vec3& w) {
+  return std::abs(w.y);
+}
 
 
 class Material {
@@ -26,7 +35,7 @@ class Diffuse : public Material {
       float u = sampler.getNext();
       float v = sampler.getNext();
       wi_local = sampleCosineHemisphere(u, v, pdf_w);
-      return texture->eval(res);
+      return texture->eval(res) / M_PI;
     };
 };
 #endif

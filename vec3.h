@@ -109,4 +109,24 @@ inline Vec3 cross(const Vec3& v1, const Vec3& v2) {
 inline Vec3 normalize(const Vec3& v) {
   return v/v.length();
 }
+
+
+inline void orthonormalBasis(const Vec3& v1, Vec3& v2, Vec3& v3) {
+  v2 = Vec3(1, 0, 0);
+  if(std::abs(v1.x) > 0.9) v2 = Vec3(0, 1, 0);
+
+  v2 = normalize(v2 - dot(v1, v2)*v1);
+  v3 = normalize(cross(v1, v2));
+}
+
+
+inline Vec3 world2local(const Vec3& p, const Vec3& v1, const Vec3& v2, const Vec3& v3) {
+  return Vec3(dot(p, v1), dot(p, v2), dot(p, v3));
+}
+inline Vec3 local2world(const Vec3& p, const Vec3& v1, const Vec3& v2, const Vec3& v3) {
+  Vec3 a = Vec3(v1.x, v2.x, v3.x);
+  Vec3 b = Vec3(v1.y, v2.y, v3.y);
+  Vec3 c = Vec3(v1.z, v2.z, v3.z);
+  return Vec3(dot(p, a), dot(p, b), dot(p, c));
+}
 #endif

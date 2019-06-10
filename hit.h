@@ -12,6 +12,5 @@ class Hit {
     const Primitive* hitPrimitive;
 
     Hit() {};
-    Hit(float _t, const Vec3& _hitPos, const Vec3& _hitNormal, const Primitive* _hitPrimitive) : t(_t), hitPos(_hitPos), hitNormal(_hitNormal), hitPrimitive(_hitPrimitive) {};
 };
 #endif
