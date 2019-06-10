@@ -51,9 +51,11 @@ class PurePathTracing : public Integrator {
           }
 
           //Generate Local Coordinate Vectors
-          Vec3 n, s, t;
+          Vec3 n = res.hitNormal;
+          Vec3 s, t;
           orthonormalBasis(n, s, t);
-          Vec3 wo_local = world2local(-ray.direction, s, n, t);
+          Vec3 wo = -ray.direction;
+          Vec3 wo_local = world2local(wo, s, n, t);
 
           //BRDF Sampling
           auto mat = res.hitPrimitive->material;

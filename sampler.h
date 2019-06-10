@@ -26,10 +26,10 @@ class UniformSampler : public Sampler {
 
 
 inline Vec3 sampleCosineHemisphere(float u, float v, float& pdf) {
-  float y = 1 - 2*u;
-  float r = std::sqrt(std::max(0.0f, 1 - y*y));
+  float theta = 0.5 * std::acos(1 - 2*u);
   float phi = 2*M_PI*v;
+  float y = std::cos(theta);
   pdf = y / M_PI;
-  return Vec3(r*std::cos(phi), y, r*std::sin(phi));
+  return Vec3(std::cos(phi)*std::sin(theta), y, std::sin(phi)*std::sin(theta));
 }
 #endif
