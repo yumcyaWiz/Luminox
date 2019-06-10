@@ -1,6 +1,7 @@
 #ifndef INTEGRATOR_H
 #define INTEGRATOR_H
 #include <memory>
+#include <omp.h>
 #include "image.h"
 #include "camera.h"
 #include "scene.h"
@@ -83,6 +84,7 @@ class PurePathTracing : public Integrator {
     void render(const Scene& scene) {
       for(int k = 0; k < samples; k++) {
         for(int i = 0; i < image->height; i++) {
+#pragma omp parallel for schedule(dynamic, 1)
           for(int j = 0; j < image->width; j++) {
             float u = (2*(j + sampler->getNext()) - image->width)/image->height;
             float v = (2*(i + sampler->getNext()) - image->height)/image->height;

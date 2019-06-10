@@ -36,7 +36,7 @@ int main() {
   scene.add(sphere_prim2);
   scene.add(sphere_prim3);
 
-  PurePathTracing integrator(image, camera, sampler, 10);
+  PurePathTracing integrator(image, camera, sampler, 100);
   integrator.render(scene);
 }
 
