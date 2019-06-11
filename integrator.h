@@ -139,16 +139,18 @@ class NEEPathTracing : public Integrator {
           //light sampling
           for(auto l : scene.lights) {
             Vec3 sampledPos;
-            Vec3 normal;
             float pdf_A;
-            Vec3 le = l->sample(res, *sampler, sampledPos, normal, pdf_A);
+            Vec3 le = l->sample(res, *sampler, sampledPos, pdf_A);
 
             Vec3 wi = normalize(sampledPos - res.hitPos);
-            float pdf_w = (sampledPos - res.hitPos).length2() / std::abs(dot(-wi, normal)) * pdf_A;
-
-            Vec3 wi_local = world2local(wi, s, n, t);
-            Vec3 brdf = res.hitPrimitive->material->BRDF(res, wo_local, wi_local);
-            accumulated_color += throughput * brdf * absCosTheta(wi_local) * le / pdf_w;
+            Hit shadow_res;
+            Ray shadowRay(res.hitPos, wi);
+            if(scene.intersect(shadowRay, shadow_res) && shadow_res.hitPrimitive->light == l) {
+              float pdf_w = (sampledPos - res.hitPos).length2() / std::abs(dot(-shadowRay.direction, shadow_res.hitNormal)) * pdf_A;
+              Vec3 wi_local = world2local(wi, s, n, t);
+              Vec3 brdf = res.hitPrimitive->material->BRDF(res, wo_local, wi_local);
+              accumulated_color += throughput * brdf * absCosTheta(wi_local) * le / pdf_w;
+            }
           }
 
           //BRDF sampling for next ray

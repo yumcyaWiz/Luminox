@@ -13,7 +13,7 @@ class Light {
     Light(const Vec3& _le) : le(_le) {};
     
     virtual Vec3 Le() const = 0;
-    virtual Vec3 sample(const Hit& res, Sampler& sampler, Vec3& sampledPos, Vec3& normal, float& pdf_A) const = 0;
+    virtual Vec3 sample(const Hit& res, Sampler& sampler, Vec3& sampledPos, float& pdf_A) const = 0;
 };
 
 
@@ -27,8 +27,8 @@ class AreaLight : public Light {
       return le;
     };
 
-    Vec3 sample(const Hit& res, Sampler& sampler, Vec3& sampledPos, Vec3& normal, float& pdf_A) const {
-      sampledPos = shape->sample(res, sampler, normal, pdf_A);
+    Vec3 sample(const Hit& res, Sampler& sampler, Vec3& sampledPos, float& pdf_A) const {
+      sampledPos = shape->sample(res, sampler, pdf_A);
       return le;
     };
 };
