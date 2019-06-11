@@ -9,7 +9,7 @@
 class Shape {
   public:
     virtual bool intersect(const Ray&, Hit& res) const = 0;
-    virtual Vec3 sample(Sampler& sampler, float& pdf_A) const = 0;
+    virtual Vec3 sample(const Hit& res, Sampler& sampler, Vec3& normal, float& pdf_A) const = 0;
 };
 
 
@@ -40,9 +40,13 @@ class Sphere : public Shape {
       return true;
     };
 
-    Vec3 sample(Sampler& sampler, float& pdf_A) const {
-      Vec3 p = sampleUniformSphere(sampler.getNext(), sampler.getNext(), pdf_A);
-      return center + radius*p;
+    Vec3 sample(const Hit& res, Sampler& sampler, Vec3& normal, float& pdf_A) const {
+      Vec3 p = sampleUniformHemisphere(sampler.getNext(), sampler.getNext(), pdf_A);
+      Vec3 n = normalize(center - res.hitPos);
+      Vec3 s, t;
+      orthonormalBasis(n, s, t);
+      normal = -n;
+      return center + s*p.x + n*p.y + t*p.z;
     };
 };
 
@@ -75,10 +79,11 @@ class Plane : public Shape {
       return true;
     };
 
-    Vec3 sample(Sampler& sampler, float& pdf_A) const {
+    Vec3 sample(const Hit& res, Sampler& sampler, Vec3& n, float& pdf_A) const {
       pdf_A = 1 / (width*height);
       float u = 2*sampler.getNext() - 1;
       float v = 2*sampler.getNext() - 1;
+      n = normal;
       return center + u*right + v*forward;
     };
 };
