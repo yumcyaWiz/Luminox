@@ -2,6 +2,13 @@
 #define CAMERA_H
 #include "vec3.h"
 #include "ray.h"
+
+
+inline float deg2rad(float deg) {
+  return deg / 180 * M_PI;
+}
+
+
 class Camera {
   public:
     Vec3 camPos;
@@ -25,10 +32,15 @@ class Camera {
 
 class PinholeCamera : public Camera {
   public:
-    PinholeCamera(const Vec3& _camPos, const Vec3& _camForward) : Camera(_camPos, _camForward) {};
+    float fov;
+    float f;
+
+    PinholeCamera(const Vec3& _camPos, const Vec3& _camForward, float _fov) : Camera(_camPos, _camForward), fov(deg2rad(_fov)) {
+      f = 1 / std::tan(fov/2);
+    };
 
     Ray getRay(float u, float v) const {
-      Vec3 pinholePos = camPos + camForward;
+      Vec3 pinholePos = camPos + f*camForward;
       Vec3 sensorPos = camPos + u*camRight + v*camUp;
       return Ray(sensorPos, normalize(pinholePos - sensorPos));
     };
