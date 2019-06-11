@@ -52,15 +52,24 @@ class Sphere : public Shape {
 
 class Plane : public Shape {
   public:
-    Vec3 center;
-    float width;
-    float height;
-    Vec3 normal;
+    Vec3 leftCornerPoint;
     Vec3 right;
-    Vec3 forward;
+    Vec3 up;
+    Vec3 normal;
 
-    Plane(const Vec3& _center, float _width, float _height, const Vec3& _normal, const Vec3& _right) : center(_center), width(_width), height(_height), normal(_normal), right(_right) {
-      forward = cross(right, normal);
+    Vec3 center;
+    Vec3 rightDir;
+    float rightLength;
+    Vec3 upDir;
+    float upLength;
+
+    Plane(const Vec3& _leftCornerPoint, const Vec3& _up, const Vec3& _right) : leftCornerPoint(_leftCornerPoint), right(_right), up(_up) { 
+      normal = normalize(cross(right, up));
+      center = leftCornerPoint + 0.5*right + 0.5*up;
+      rightDir = normalize(right);
+      rightLength = right.length();
+      upDir = normalize(up);
+      upLength = up.length();
     };
 
     bool intersect(const Ray& ray, Hit& res) const {
@@ -68,9 +77,9 @@ class Plane : public Shape {
       if(t < ray.tmin || t > ray.tmax) return false;
 
       Vec3 hitPos = ray(t);
-      float dx = dot(hitPos - center, right);
-      float dy = dot(hitPos - center, forward);
-      if(std::abs(dx) > width/2 || std::abs(dy) > height/2) return false;
+      float dx = dot(hitPos - leftCornerPoint, rightDir);
+      float dy = dot(hitPos - leftCornerPoint, upDir);
+      if(dx < 0 || dx > rightLength || dy < 0 || dy > upLength) return false;
 
       res.t = t;
       res.hitPos = hitPos;
@@ -79,10 +88,10 @@ class Plane : public Shape {
     };
 
     Vec3 sample(const Hit& res, Sampler& sampler, float& pdf_A) const {
-      pdf_A = 1 / (width*height);
+      pdf_A = 1 / (rightLength*upLength);
       float u = 2*sampler.getNext() - 1;
       float v = 2*sampler.getNext() - 1;
-      return center + u*right + v*forward;
+      return center + u*rightDir + v*upDir;
     };
 };
 #endif
