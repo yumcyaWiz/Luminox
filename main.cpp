@@ -38,8 +38,8 @@ int main() {
   auto left_wall_prim = std::make_shared<Primitive>(left_wall, std::make_shared<Diffuse>(green), nullptr);
   auto ceil_prim = std::make_shared<Primitive>(ceil, std::make_shared<Diffuse>(white1), std::make_shared<AreaLight>(Vec3(1.5), ceil));
   auto forward_wall_prim = std::make_shared<Primitive>(forward_wall, std::make_shared<Diffuse>(white1), nullptr);
-  auto sphere1_prim = std::make_shared<Primitive>(sphere1, std::make_shared<Mirror>(white2), nullptr);
-  auto sphere2_prim = std::make_shared<Primitive>(sphere2, std::make_shared<Glass>(white2, 1.5), nullptr);
+  auto sphere1_prim = std::make_shared<Primitive>(sphere1, std::make_shared<Diffuse>(white1), nullptr);
+  auto sphere2_prim = std::make_shared<Primitive>(sphere2, std::make_shared<Diffuse>(white1), nullptr);
 
   Scene scene;
   scene.add(floor_prim);
@@ -50,6 +50,6 @@ int main() {
   scene.add(sphere1_prim);
   scene.add(sphere2_prim);
 
-  PurePathTracing integrator(image, camera, sampler, 10);
+  NEEPathTracing integrator(image, camera, sampler, 10);
   integrator.render(scene);
 }

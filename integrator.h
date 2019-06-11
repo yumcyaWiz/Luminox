@@ -171,5 +171,22 @@ class NEEPathTracing : public Integrator {
       }
       return accumulated_color;
     };
+
+
+    void render(const Scene& scene) {
+      for(int k = 0; k < samples; k++) {
+#pragma omp parallel for schedule(dynamic, 1)
+        for(int i = 0; i < image->height; i++) {
+          for(int j = 0; j < image->width; j++) {
+            float u = (2*(j + sampler->getNext()) - image->width)/image->height;
+            float v = (2*(i + sampler->getNext()) - image->height)/image->height;
+            Ray ray = camera->getRay(u, v);
+            image->addPixel(i, j, this->integrate(ray, scene));
+          }
+        }
+      }
+      image->divide(samples);
+      image->ppm_output("output.ppm");
+    };
 };
 #endif
