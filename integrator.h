@@ -75,7 +75,7 @@ class PurePathTracing : public Integrator {
         }
         //When ray hits sky
         else {
-          accumulated_color += throughput * Vec3(0, 0, 0);
+          accumulated_color += throughput * Vec3(1, 1, 1);
           break;
         }
       }
