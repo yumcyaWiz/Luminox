@@ -25,6 +25,7 @@ int main() {
   auto left_wall = std::make_shared<Plane>(Vec3(-3, 3, 0), 6, 6, Vec3(1, 0, 0), Vec3(0, 1, 0));
   auto ceil = std::make_shared<Plane>(Vec3(0, 6, 0), 6, 6, Vec3(0, -1, 0), Vec3(1, 0, 0));
   auto forward_wall = std::make_shared<Plane>(Vec3(0, 3, 3), 6, 6, Vec3(0, 0, -1), Vec3(1, 0, 0));
+  auto light = std::make_shared<Plane>(Vec3(0, 5.9, 0), 2, 2, Vec3(0, -1, 0), Vec3(1, 0, 0));
   auto sphere1 = std::make_shared<Sphere>(Vec3(-1.5, 1.5, 1.5), 1.5);
   auto sphere2 = std::make_shared<Sphere>(Vec3(1.5, 1.5, -1.0), 1.5);
 
@@ -36,8 +37,9 @@ int main() {
   auto floor_prim = std::make_shared<Primitive>(floor, std::make_shared<Diffuse>(white1), nullptr);
   auto right_wall_prim = std::make_shared<Primitive>(right_wall, std::make_shared<Diffuse>(red), nullptr);
   auto left_wall_prim = std::make_shared<Primitive>(left_wall, std::make_shared<Diffuse>(green), nullptr);
-  auto ceil_prim = std::make_shared<Primitive>(ceil, std::make_shared<Diffuse>(white1), std::make_shared<AreaLight>(Vec3(1.5), ceil));
+  auto ceil_prim = std::make_shared<Primitive>(ceil, std::make_shared<Diffuse>(white1), nullptr);
   auto forward_wall_prim = std::make_shared<Primitive>(forward_wall, std::make_shared<Diffuse>(white1), nullptr);
+  auto light_prim = std::make_shared<Primitive>(light, std::make_shared<Diffuse>(white1), std::make_shared<AreaLight>(Vec3(2), light));
   auto sphere1_prim = std::make_shared<Primitive>(sphere1, std::make_shared<Diffuse>(white1), nullptr);
   auto sphere2_prim = std::make_shared<Primitive>(sphere2, std::make_shared<Diffuse>(white1), nullptr);
 
@@ -47,6 +49,7 @@ int main() {
   scene.add(left_wall_prim);
   scene.add(ceil_prim);
   scene.add(forward_wall_prim);
+  scene.add(light_prim);
   scene.add(sphere1_prim);
   scene.add(sphere2_prim);
 

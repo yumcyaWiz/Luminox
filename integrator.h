@@ -1,10 +1,12 @@
 #ifndef INTEGRATOR_H
 #define INTEGRATOR_H
 #include <memory>
+#include <chrono>
 #include <omp.h>
 #include "image.h"
 #include "camera.h"
 #include "scene.h"
+#include "util.h"
 
 
 class Integrator {
@@ -82,6 +84,7 @@ class PurePathTracing : public Integrator {
 
 
     void render(const Scene& scene) {
+      auto start_time = std::chrono::system_clock::now();
       for(int k = 0; k < samples; k++) {
 #pragma omp parallel for schedule(dynamic, 1)
         for(int i = 0; i < image->height; i++) {
@@ -90,9 +93,19 @@ class PurePathTracing : public Integrator {
             float v = (2*(i + sampler->getNext()) - image->height)/image->height;
             Ray ray = camera->getRay(u, v);
             image->addPixel(i, j, this->integrate(ray, scene));
+
+            if(omp_get_thread_num() == 0) {
+              int index = j + image->width*i + image->width*image->height*k;
+              std::cout << progressbar(index, image->width*image->height*samples) << " " << percentage(index, image->width*image->height*samples) << "\r" << std::flush;
+            }
           }
         }
       }
+      auto end_time = std::chrono::system_clock::now();
+      auto msec = std::chrono::duration_cast<std::chrono::milliseconds>(end_time - start_time).count();
+
+      std::cout << "Rendering finished in " << msec << "ms" << std::endl;
+
       image->divide(samples);
       image->ppm_output("output.ppm");
     };
@@ -176,6 +189,7 @@ class NEEPathTracing : public Integrator {
 
 
     void render(const Scene& scene) {
+      auto start_time = std::chrono::system_clock::now();
       for(int k = 0; k < samples; k++) {
 #pragma omp parallel for schedule(dynamic, 1)
         for(int i = 0; i < image->height; i++) {
@@ -184,9 +198,19 @@ class NEEPathTracing : public Integrator {
             float v = (2*(i + sampler->getNext()) - image->height)/image->height;
             Ray ray = camera->getRay(u, v);
             image->addPixel(i, j, this->integrate(ray, scene));
+
+            if(omp_get_thread_num() == 0) {
+              int index = j + image->width*i + image->width*image->height*k;
+              std::cout << progressbar(index, image->width*image->height*samples) << " " << percentage(index, image->width*image->height*samples) << "\r" << std::flush;
+            }
           }
         }
       }
+      auto end_time = std::chrono::system_clock::now();
+      auto msec = std::chrono::duration_cast<std::chrono::milliseconds>(end_time - start_time).count();
+
+      std::cout << "Rendering finished in " << msec << "ms" << std::endl;
+
       image->divide(samples);
       image->ppm_output("output.ppm");
     };
