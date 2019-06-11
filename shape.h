@@ -3,11 +3,13 @@
 #include <cmath>
 #include "ray.h"
 #include "hit.h"
+#include "sampler.h"
 
 
 class Shape {
   public:
     virtual bool intersect(const Ray&, Hit& res) const = 0;
+    virtual Vec3 sample(Sampler& sampler, float& pdf_A) const = 0;
 };
 
 
@@ -36,6 +38,11 @@ class Sphere : public Shape {
       res.hitPos = ray(t);
       res.hitNormal = normalize(res.hitPos - center);
       return true;
+    };
+
+    Vec3 sample(Sampler& sampler, float& pdf_A) const {
+      Vec3 p = sampleUniformSphere(sampler.getNext(), sampler.getNext(), pdf_A);
+      return center + radius*p;
     };
 };
 
@@ -66,6 +73,13 @@ class Plane : public Shape {
       res.hitPos = hitPos;
       res.hitNormal = dot(-ray.direction, normal) > 0 ? normal : -normal;
       return true;
+    };
+
+    Vec3 sample(Sampler& sampler, float& pdf_A) const {
+      pdf_A = 1 / (width*height);
+      float u = 2*sampler.getNext() - 1;
+      float v = 2*sampler.getNext() - 1;
+      return center + u*right + v*forward;
     };
 };
 #endif
