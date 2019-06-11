@@ -58,6 +58,7 @@ class Material {
     Material(const std::shared_ptr<Texture>& _tex) : texture(_tex) {};
 
     virtual Vec3 sample(const Vec3& wo_local, const Hit& res, Sampler& sampler, Vec3& wi_local, float& pdf_w) const = 0;
+    virtual Vec3 BRDF(const Hit& res, const Vec3& wo_local, const Vec3& wi_local) const = 0;
 };
 
 
@@ -71,6 +72,10 @@ class Diffuse : public Material {
       wi_local = sampleCosineHemisphere(u, v, pdf_w);
       return texture->eval(res) / M_PI;
     };
+
+    Vec3 BRDF(const Hit& res, const Vec3& wo_local, const Vec3& wi_local) const {
+      return texture->eval(res) / M_PI;
+    };
 };
 
 
@@ -82,6 +87,10 @@ class Mirror : public Material {
       wi_local = reflect(wo_local, Vec3(0, 1, 0));
       pdf_w = 1;
       return texture->eval(res) / absCosTheta(wi_local);
+    };
+
+    Vec3 BRDF(const Hit& res, const Vec3& wo_local, const Vec3& wi_local) const {
+      return Vec3(0);
     };
 };
 
@@ -119,6 +128,10 @@ class Glass : public Material {
           return (1 - fr) * texture->eval(res) / absCosTheta(wi_local);
         }
       }
+    };
+
+    Vec3 BRDF(const Hit& res, const Vec3& wo_local, const Vec3& wi_local) const {
+      return Vec3(0);
     };
 };
 #endif
