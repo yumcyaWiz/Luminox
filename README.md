@@ -7,6 +7,7 @@ Luminox is a minimal but easily extensible path tracer intended for educational 
 # Requirements
 
 * C++11 or Higher
+* CMake 3.12 or Higher
 * OpenMP
 
 ## Features
@@ -22,10 +23,13 @@ Luminox is a minimal but easily extensible path tracer intended for educational 
 ## Build
 
 ```
+mkdir build
+cd build
+cmake ..
 make
 ```
 
 ## Run
 ```
-./a.out
+./build/main
 ```
