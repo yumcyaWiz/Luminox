@@ -2,6 +2,8 @@
 
 Luminox is a minimal but easily extensible path tracer intended for educational and experimental use.
 
+![](img.png)
+
 # Requirements
 
 * C++11 or Higher
